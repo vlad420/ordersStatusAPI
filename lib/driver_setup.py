@@ -12,8 +12,6 @@ lock = Lock()
 def init_driver():
     global driver
     if driver is None:
-        # options = uc.ChromeOptions()
-        # options.user_data_dir = get_chrome_profile_path()
         driver = uc.Chrome(user_data_dir=get_chrome_profile_path())
 
 

@@ -6,7 +6,8 @@ from selenium.webdriver.common.keys import Keys
 from selenium.webdriver.support import expected_conditions as EC
 from selenium.webdriver.support.ui import WebDriverWait
 
-from lib.constants import GOOGLE_CONSOLE_URL
+from lib.constants import GOOGLE_CONSOLE_URL, TIMP_ASTEPTARE, TIMP_ASTEPTARE_DELAY_UI, TIMP_ASTEPTARE_DELAY_UI_MARE, \
+    INTERVAL_POLLING
 
 
 def chech_if_logged_in(driver):
@@ -27,14 +28,14 @@ def asteapta_logarea(driver):
 
 def introdu_order(order_id, driver):
     try:
-        search_form = WebDriverWait(driver, 10).until(
+        search_form = WebDriverWait(driver, TIMP_ASTEPTARE).until(
             EC.presence_of_element_located((By.CLASS_NAME, 'mdc-text-field__input'))
         )
         search_form.clear()
         search_form.send_keys(order_id)
-        time.sleep(0.3)
+        time.sleep(TIMP_ASTEPTARE_DELAY_UI)
         search_form.send_keys(Keys.ENTER)
-        time.sleep(1)
+        time.sleep(TIMP_ASTEPTARE_DELAY_UI_MARE)
     except TimeoutException:
         print('[-] Nu s-a putut găsi elementul de căutare')
         raise Exception('Nu s-a putut găsi elementul de căutare')
@@ -61,12 +62,11 @@ def asteapta_raspuns_optimizat(driver):
     locator_placeholder = (By.CLASS_NAME, "particle-table-placeholder")
 
     # Setează un timp maxim de așteptare și un interval de polling
-    timp_maxim_asteptare = 10
-    interval_polling = 0.5  # Secunde
+
     timp_start = time.time()
 
     element_gasit = None
-    while (time.time() - timp_start) < timp_maxim_asteptare:
+    while (time.time() - timp_start) < TIMP_ASTEPTARE:
         try:
             element_tabel = driver.find_element(*locator_order)
             if element_tabel.is_displayed():
@@ -83,6 +83,6 @@ def asteapta_raspuns_optimizat(driver):
         except NoSuchElementException:
             pass  # Ignoră dacă elementul nu este găsit
 
-        time.sleep(interval_polling)
+        time.sleep(INTERVAL_POLLING)
 
     return element_gasit

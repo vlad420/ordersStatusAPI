@@ -1,2 +1,5 @@
 GOOGLE_CONSOLE_URL = 'https://play.google.com/console/u/0/developers/4797224868258853173/orders'
-PROFILE_PATH = r'C:\Users\Vlad\AppData\Local\Google\Chrome\User Data'
+TIMP_ASTEPTARE = 10
+TIMP_ASTEPTARE_DELAY_UI = 0.3
+TIMP_ASTEPTARE_DELAY_UI_MARE = 1
+INTERVAL_POLLING = 0.5
