@@ -2,6 +2,9 @@ from threading import Lock
 
 import undetected_chromedriver as uc
 
+
+from lib.utils import get_chrome_profile_path
+
 driver = None
 lock = Lock()
 
@@ -9,7 +12,9 @@ lock = Lock()
 def init_driver():
     global driver
     if driver is None:
-        driver = uc.Chrome()
+        # options = uc.ChromeOptions()
+        # options.user_data_dir = get_chrome_profile_path()
+        driver = uc.Chrome(user_data_dir=get_chrome_profile_path())
 
 
 def get_driver():
