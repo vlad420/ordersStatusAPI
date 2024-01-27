@@ -13,17 +13,18 @@ from lib.constants import GOOGLE_CONSOLE_URL, TIMP_ASTEPTARE, TIMP_ASTEPTARE_DEL
 def chech_if_logged_in(driver):
     url_curent = driver.current_url
     if GOOGLE_CONSOLE_URL in url_curent:
-        print('[+] Logged in successfully')
         return True
     else:
-        print('[-] Not logged in')
         return False
 
 
 def asteapta_logarea(driver):
-    while not driver.current_url.startswith(GOOGLE_CONSOLE_URL):
-        time.sleep(1)
-    print('[+] Logged in successfully')
+    for i in range(0, TIMP_ASTEPTARE):
+        if driver.current_url.startswith(GOOGLE_CONSOLE_URL):
+            return
+        else:
+            time.sleep(1)
+    raise Exception('Nu s-a putut face logarea')
 
 
 def introdu_order(order_id, driver):

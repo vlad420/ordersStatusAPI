@@ -1,5 +1,6 @@
 from flask import Flask
 from flask_smorest import Api
+from waitress import serve
 
 from lib.driver_setup import init_driver, shutdown_driver
 from resources.order_status import blp as OrderStatusBluePrint
@@ -21,8 +22,6 @@ api.register_blueprint(OrderStatusBluePrint)
 if __name__ == '__main__':
     try:
         init_driver()
-        app.run(debug=False)
+        serve(app, host='0.0.0.0', port=80)
     finally:
         shutdown_driver()
-    # from waitress import serve
-    # serve(app, host='0.0.0.0', port=80)

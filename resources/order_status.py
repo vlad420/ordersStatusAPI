@@ -19,11 +19,12 @@ class OrderStatus(MethodView):
 
             with lock:
                 if not chech_if_logged_in(driver=driver):
+                    print('[-] Nu esti logat')
                     driver.get(GOOGLE_CONSOLE_URL)
                     asteapta_logarea(driver=driver)
-
+                print('[+] Logat cu succes')
                 status = get_order_status(order_id=order_id, driver=driver)
-                print(f'Statusul comenzii {order_id} este: {status}')
+                print(f'[+] Statusul comenzii {order_id} este: {status}')
 
                 return OrderStatusSchema().dump({'order_id': order_id, 'status': status})
         except Exception as e:
