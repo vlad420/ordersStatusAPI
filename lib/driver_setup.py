@@ -9,10 +9,10 @@ driver = None
 lock = Lock()
 
 
-def init_driver():
+def init_driver(headless=False):
     global driver
     if driver is None:
-        driver = uc.Chrome(user_data_dir=get_chrome_profile_path())
+        driver = uc.Chrome(headless=headless, user_data_dir=get_chrome_profile_path())
 
 
 def get_driver():
