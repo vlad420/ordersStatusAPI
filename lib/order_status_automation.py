@@ -33,6 +33,7 @@ def introdu_order(order_id, driver):
             EC.presence_of_element_located((By.CLASS_NAME, 'mdc-text-field__input'))
         )
         search_form.clear()
+        time.sleep(TIMP_ASTEPTARE_DELAY_UI)
         search_form.send_keys(order_id)
         time.sleep(TIMP_ASTEPTARE_DELAY_UI)
         search_form.send_keys(Keys.ENTER)
@@ -42,9 +43,9 @@ def introdu_order(order_id, driver):
         raise Exception('Nu s-a putut găsi elementul de căutare')
 
 
-def get_order_status(order_id, driver):
+def get_order_status(order_id, driver, inexistent=False):
     introdu_order(order_id=order_id, driver=driver)
-    element_gasit = asteapta_raspuns_optimizat(driver=driver)
+    element_gasit = asteapta_raspuns_optimizat(driver=driver, order_id=order_id)
     if element_gasit == 'order':
         intrare_tabel = driver.find_element(By.CLASS_NAME, 'particle-table-row')
         status_cell = intrare_tabel.find_element(By.XPATH, ".//ess-cell[@essfield='order_status_column']")
@@ -52,12 +53,17 @@ def get_order_status(order_id, driver):
         return status
         # Procesează informațiile din tabel aici
     elif element_gasit == 'placeholder':
-        return 'Inexistentă'
+        if inexistent:
+            return 'Inexistentă'
+        else:
+            print('[-] Comanda nu a fost găsită se reincearca in 10 secunde')
+            time.sleep(10)
+            return get_order_status(order_id=order_id, driver=driver, inexistent=True)
     else:
         raise Exception('A intervenit o eroare la căutarea comenzii. Încearcă din nou.')
 
 
-def asteapta_raspuns_optimizat(driver):
+def asteapta_raspuns_optimizat(driver, order_id):
     # Definește locatoarele pentru elementele pe care dorești să le verifici
     locator_order = (By.CLASS_NAME, "particle-table-row")
     locator_placeholder = (By.CLASS_NAME, "particle-table-placeholder")
@@ -69,10 +75,18 @@ def asteapta_raspuns_optimizat(driver):
     element_gasit = None
     while (time.time() - timp_start) < TIMP_ASTEPTARE:
         try:
-            element_tabel = driver.find_element(*locator_order)
-            if element_tabel.is_displayed():
-                element_gasit = 'order'
-                break
+            element_tabel = driver.find_elements(*locator_order)
+            if len(element_tabel) > 1:
+                print('[-] Mai multe elemente găsite')
+                pass
+            elif len(element_tabel) == 1:
+                if element_tabel[0].is_displayed():
+                    id_comanda = element_tabel[0].find_element(By.XPATH, ".//ess-cell[@essfield='order_id_column']").text
+                    if id_comanda == order_id:
+                        element_gasit = 'order'
+                        break
+                    else:
+                        print('[-] Comanda găsită nu corespunde cu cea căutată')
         except NoSuchElementException:
             pass  # Ignoră dacă elementul nu este găsit
 
